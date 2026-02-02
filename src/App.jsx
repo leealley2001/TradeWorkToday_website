@@ -1,15 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createClient } from '@supabase/supabase-js';
 
-const sampleApplications = [
-  { id: 1, name: "Marcus Johnson", trade: "Electrician", experience: 12, hourlyRate: 45, location: "Phoenix", phone: "602-555-0142", email: "marcus.j@email.com", availability: "Immediate", employmentType: "Full-time", certifications: ["Master Electrician", "OSHA 30"], rating: 4.8, appliedDate: "2026-01-28", hasResume: true, references: [{name: "Tom Brady", phone: "602-555-1111", relationship: "Former Supervisor"}, {name: "Mike Chen", phone: "602-555-2222", relationship: "Coworker"}] },
-  { id: 2, name: "Sarah Chen", trade: "Plumber", experience: 8, hourlyRate: 42, location: "Scottsdale", phone: "480-555-0198", email: "sarah.chen@email.com", availability: "2 weeks", employmentType: "Full-time", certifications: ["Journeyman Plumber", "Backflow Certified"], rating: 4.9, appliedDate: "2026-01-29", hasResume: true, references: [{name: "Bill Smith", phone: "480-555-3333", relationship: "Former Employer"}, {name: "Jane Doe", phone: "480-555-4444", relationship: "Supervisor"}] },
-  { id: 3, name: "Robert Williams", trade: "HVAC Technician", experience: 15, hourlyRate: 55, location: "Mesa", phone: "480-555-0167", email: "rwilliams@email.com", availability: "Immediate", employmentType: "Full-time", certifications: ["EPA 608", "NATE Certified"], rating: 4.7, appliedDate: "2026-01-30", hasResume: false, references: [{name: "Carlos Rodriguez", phone: "602-555-5555", relationship: "Former Supervisor"}, {name: "Amy Wilson", phone: "480-555-6666", relationship: "Project Manager"}] },
-  { id: 4, name: "Maria Garcia", trade: "Carpenter", experience: 6, hourlyRate: 38, location: "Tempe", phone: "480-555-0134", email: "m.garcia@email.com", availability: "1 week", employmentType: "Either", certifications: ["OSHA 10", "First Aid"], rating: 4.5, appliedDate: "2026-01-30", hasResume: true, references: [{name: "Steve Johnson", phone: "602-555-7777", relationship: "Contractor"}, {name: "Lisa Park", phone: "480-555-8888", relationship: "Former Employer"}] },
-  { id: 5, name: "James Thompson", trade: "Electrician", experience: 20, hourlyRate: 60, location: "Chandler", phone: "480-555-0145", email: "jthompson@email.com", availability: "Immediate", employmentType: "Part-time", certifications: ["Master Electrician", "Low Voltage", "OSHA 30"], rating: 5.0, appliedDate: "2026-01-31", hasResume: true, references: [{name: "David Lee", phone: "602-555-9999", relationship: "Former Supervisor"}, {name: "Rachel Green", phone: "480-555-0001", relationship: "Business Owner"}] },
-  { id: 6, name: "Linda Martinez", trade: "Welder", experience: 10, hourlyRate: 48, location: "Glendale", phone: "623-555-0189", email: "linda.m@email.com", availability: "Immediate", employmentType: "Full-time", certifications: ["AWS Certified", "OSHA 30"], rating: 4.6, appliedDate: "2026-01-31", hasResume: false, references: [{name: "Frank Miller", phone: "623-555-0002", relationship: "Shop Foreman"}, {name: "Nancy White", phone: "602-555-0003", relationship: "Former Employer"}] },
-  { id: 7, name: "David Kim", trade: "Plumber", experience: 4, hourlyRate: 35, location: "Peoria", phone: "623-555-0112", email: "d.kim@email.com", availability: "2 weeks", employmentType: "Full-time", certifications: ["Apprentice Plumber"], rating: 4.3, appliedDate: "2026-02-01", hasResume: true, references: [{name: "Tony Stark", phone: "623-555-0004", relationship: "Journeyman Mentor"}, {name: "Peter Parker", phone: "602-555-0005", relationship: "Coworker"}] },
-  { id: 8, name: "Angela Brown", trade: "HVAC Technician", experience: 7, hourlyRate: 44, location: "Gilbert", phone: "480-555-0156", email: "abrown@email.com", availability: "1 week", employmentType: "Either", certifications: ["EPA 608", "R-410A Certified"], rating: 4.8, appliedDate: "2026-02-01", hasResume: false, references: [{name: "Bruce Wayne", phone: "480-555-0006", relationship: "Service Manager"}, {name: "Clark Kent", phone: "602-555-0007", relationship: "Former Supervisor"}] },
-];
+const supabase = createClient(
+  'https://pmbukkiatxyoefpmmypg.supabase.co',
+  'sb_publishable_VjjWV6wKBdlqJWVA6Rb1RA_vtNjjaIf'
+);
 
 const trades = ["All Trades", "Electrician", "Plumber", "HVAC Technician", "Carpenter", "Welder", "Roofer", "Mason", "Painter", "General Labor"];
 const phoenixLocations = ["Phoenix", "Scottsdale", "Mesa", "Tempe", "Chandler", "Gilbert", "Glendale", "Peoria", "Surprise", "Goodyear", "Avondale", "Buckeye", "Queen Creek", "Apache Junction"];
@@ -19,7 +14,8 @@ const experienceLevels = ["Any Experience", "1-5 years", "5-10 years", "10-15 ye
 
 export default function TradeHiringPlatform() {
   const [view, setView] = useState('landing');
-  const [applications, setApplications] = useState(sampleApplications);
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     trade: "All Trades",
     availability: "Any",
@@ -30,7 +26,7 @@ export default function TradeHiringPlatform() {
     minRating: 0,
     search: ""
   });
-  const [sortBy, setSortBy] = useState("appliedDate");
+  const [sortBy, setSortBy] = useState("applied_date");
   const [sortOrder, setSortOrder] = useState("desc");
   const [selectedWorkers, setSelectedWorkers] = useState([]);
   const [expandedWorker, setExpandedWorker] = useState(null);
@@ -50,11 +46,85 @@ export default function TradeHiringPlatform() {
   const YOUR_EMAIL = "leealley2001@gmail.com";
   const DASHBOARD_PASSWORD = "Tradework2026";
 
+  // Load applicants from database
+  useEffect(() => {
+    loadApplicants();
+  }, []);
+
+  const loadApplicants = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('applicants')
+      .select('*')
+      .order('applied_date', { ascending: false });
+    
+    if (error) {
+      console.error('Error loading applicants:', error);
+    } else {
+      const formatted = data.map(app => ({
+        id: app.id,
+        name: app.name,
+        email: app.email,
+        phone: app.phone,
+        location: app.location,
+        trade: app.trade,
+        experience: app.experience,
+        hourlyRate: app.hourly_rate,
+        employmentType: app.employment_type,
+        availability: app.availability,
+        certifications: app.certifications || [],
+        hasResume: app.has_resume,
+        resumeName: app.resume_name,
+        references: [
+          { name: app.ref1_name, phone: app.ref1_phone, relationship: app.ref1_relationship },
+          { name: app.ref2_name, phone: app.ref2_phone, relationship: app.ref2_relationship }
+        ],
+        rating: app.rating || 0,
+        appliedDate: app.applied_date
+      }));
+      setApplications(formatted);
+    }
+    setLoading(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitError(null);
 
+    // Save to database
+    const { data, error } = await supabase
+      .from('applicants')
+      .insert([{
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        location: formData.location,
+        trade: formData.trade,
+        experience: parseInt(formData.experience),
+        hourly_rate: parseInt(formData.hourlyRate),
+        employment_type: formData.employmentType,
+        availability: formData.availability,
+        certifications: formData.certifications ? formData.certifications.split(',').map(c => c.trim()) : [],
+        has_resume: !!formData.resume,
+        resume_name: formData.resumeName || null,
+        ref1_name: formData.ref1Name,
+        ref1_phone: formData.ref1Phone,
+        ref1_relationship: formData.ref1Relationship,
+        ref2_name: formData.ref2Name,
+        ref2_phone: formData.ref2Phone,
+        ref2_relationship: formData.ref2Relationship
+      }])
+      .select();
+
+    if (error) {
+      console.error('Database error:', error);
+      setSubmitError("Something went wrong. Please try again.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Send email notification
     const submissionData = {
       name: formData.name,
       email: formData.email,
@@ -74,36 +144,45 @@ export default function TradeHiringPlatform() {
     };
 
     try {
-      const response = await fetch(`https://formsubmit.co/ajax/${YOUR_EMAIL}`, {
+      await fetch(`https://formsubmit.co/ajax/${YOUR_EMAIL}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(submissionData),
       });
+    } catch (emailError) {
+      console.error('Email error:', emailError);
+    }
 
-      if (response.ok) {
-        const newApp = {
-          id: applications.length + 1,
-          ...formData,
-          experience: parseInt(formData.experience),
-          hourlyRate: parseInt(formData.hourlyRate),
-          certifications: formData.certifications ? formData.certifications.split(',').map(c => c.trim()) : [],
-          hasResume: !!formData.resume,
-          references: [
-            { name: formData.ref1Name, phone: formData.ref1Phone, relationship: formData.ref1Relationship },
-            { name: formData.ref2Name, phone: formData.ref2Phone, relationship: formData.ref2Relationship }
-          ],
-          rating: 0,
-          appliedDate: new Date().toISOString().split('T')[0]
-        };
-        setApplications([...applications, newApp]);
-        setFormSubmitted(true);
-      } else {
-        throw new Error("Submission failed");
+    setFormSubmitted(true);
+    setIsSubmitting(false);
+  };
+
+  const deleteWorker = async (id) => {
+    if (window.confirm('Delete this applicant?')) {
+      const { error } = await supabase
+        .from('applicants')
+        .delete()
+        .eq('id', id);
+      
+      if (!error) {
+        setApplications(prev => prev.filter(a => a.id !== id));
+        setSelectedWorkers(prev => prev.filter(w => w !== id));
+        if (expandedWorker === id) setExpandedWorker(null);
       }
-    } catch (error) {
-      setSubmitError("Something went wrong. Please try again.");
-    } finally {
-      setIsSubmitting(false);
+    }
+  };
+
+  const deleteSelected = async () => {
+    if (window.confirm(`Delete ${selectedWorkers.length} selected applicants?`)) {
+      const { error } = await supabase
+        .from('applicants')
+        .delete()
+        .in('id', selectedWorkers);
+      
+      if (!error) {
+        setApplications(prev => prev.filter(a => !selectedWorkers.includes(a.id)));
+        setSelectedWorkers([]);
+      }
     }
   };
 
@@ -124,28 +203,13 @@ export default function TradeHiringPlatform() {
     return true;
   }).sort((a, b) => {
     let comparison = 0;
-    if (sortBy === "appliedDate") comparison = new Date(a.appliedDate) - new Date(b.appliedDate);
+    if (sortBy === "applied_date") comparison = new Date(a.appliedDate) - new Date(b.appliedDate);
     else if (sortBy === "experience") comparison = a.experience - b.experience;
     else if (sortBy === "hourlyRate") comparison = a.hourlyRate - b.hourlyRate;
     else if (sortBy === "rating") comparison = a.rating - b.rating;
     else if (sortBy === "name") comparison = a.name.localeCompare(b.name);
     return sortOrder === "desc" ? -comparison : comparison;
   });
-
-  const deleteWorker = (id) => {
-    if (window.confirm('Delete this applicant?')) {
-      setApplications(prev => prev.filter(a => a.id !== id));
-      setSelectedWorkers(prev => prev.filter(w => w !== id));
-      if (expandedWorker === id) setExpandedWorker(null);
-    }
-  };
-
-  const deleteSelected = () => {
-    if (window.confirm(`Delete ${selectedWorkers.length} selected applicants?`)) {
-      setApplications(prev => prev.filter(a => !selectedWorkers.includes(a.id)));
-      setSelectedWorkers([]);
-    }
-  };
 
   const toggleSelectWorker = (id) => {
     setSelectedWorkers(prev => 
@@ -619,8 +683,11 @@ export default function TradeHiringPlatform() {
           <button className="back-btn" onClick={() => setView('landing')}>← Back to Site</button>
           <h1 style={{ fontFamily: "'Oswald', sans-serif", fontSize: '18px', color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '1px' }}>Applicant Dashboard</h1>
         </div>
-        <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: '12px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-          {filteredApplications.length} of {applications.length} applicants
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <button className="back-btn" onClick={loadApplicants}>↻ Refresh</button>
+          <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: '12px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            {filteredApplications.length} of {applications.length} applicants
+          </div>
         </div>
       </header>
 
@@ -727,10 +794,14 @@ export default function TradeHiringPlatform() {
       </div>
 
       <div style={{ padding: '0 24px 24px' }}>
-        {filteredApplications.length === 0 ? (
+        {loading ? (
+          <div style={{ padding: '60px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+            <div style={{ fontSize: '24px', marginBottom: '16px' }}>Loading...</div>
+          </div>
+        ) : filteredApplications.length === 0 ? (
           <div style={{ padding: '60px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
             <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
-            <p>No workers match your filters. Try adjusting your criteria.</p>
+            <p>No applicants yet. They'll appear here when people apply.</p>
           </div>
         ) : (
           filteredApplications.map(worker => (
