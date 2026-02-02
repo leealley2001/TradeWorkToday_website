@@ -47,10 +47,7 @@ export default function TradeHiringPlatform() {
   const [showLogin, setShowLogin] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
 
-  // ⚠️ REPLACE with your email address
   const YOUR_EMAIL = "leealley2001@gmail.com";
-  
-  // ⚠️ Change this to update your dashboard password
   const DASHBOARD_PASSWORD = "Tradework2026";
 
   const handleSubmit = async (e) => {
@@ -134,6 +131,21 @@ export default function TradeHiringPlatform() {
     else if (sortBy === "name") comparison = a.name.localeCompare(b.name);
     return sortOrder === "desc" ? -comparison : comparison;
   });
+
+  const deleteWorker = (id) => {
+    if (window.confirm('Delete this applicant?')) {
+      setApplications(prev => prev.filter(a => a.id !== id));
+      setSelectedWorkers(prev => prev.filter(w => w !== id));
+      if (expandedWorker === id) setExpandedWorker(null);
+    }
+  };
+
+  const deleteSelected = () => {
+    if (window.confirm(`Delete ${selectedWorkers.length} selected applicants?`)) {
+      setApplications(prev => prev.filter(a => !selectedWorkers.includes(a.id)));
+      setSelectedWorkers([]);
+    }
+  };
 
   const toggleSelectWorker = (id) => {
     setSelectedWorkers(prev => 
@@ -577,7 +589,7 @@ export default function TradeHiringPlatform() {
         .filter-select:focus { outline: none; border-color: #fbbf24; }
         .search-input { padding: 12px 16px; background: #1a1a1a; border: 1px solid #333; color: #e8e8e8; font-family: 'Work Sans', sans-serif; font-size: 14px; width: 200px; }
         .search-input:focus { outline: none; border-color: #fbbf24; }
-        .worker-row { display: grid; grid-template-columns: 40px 1.5fr 1fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 0.7fr 140px; gap: 12px; padding: 16px 20px; background: #141414; border: 1px solid #222; margin-bottom: 6px; align-items: center; transition: all 0.2s ease; cursor: pointer; }
+        .worker-row { display: grid; grid-template-columns: 40px 1.5fr 1fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 0.7fr 180px; gap: 12px; padding: 16px 20px; background: #141414; border: 1px solid #222; margin-bottom: 6px; align-items: center; transition: all 0.2s ease; cursor: pointer; }
         .worker-row:hover { background: #1a1a1a; border-color: #333; }
         .worker-row.expanded { border-color: #fbbf24; background: #1a1a1a; }
         .checkbox { width: 18px; height: 18px; accent-color: #fbbf24; cursor: pointer; }
@@ -586,6 +598,8 @@ export default function TradeHiringPlatform() {
         .email-btn:hover { background: #f59e0b; }
         .phone-btn { background: transparent; border: 1px solid #059669; color: #059669; }
         .phone-btn:hover { background: rgba(5,150,105,0.1); }
+        .delete-btn { background: #dc2626; color: #fff; }
+        .delete-btn:hover { background: #b91c1c; }
         .sort-btn { background: transparent; border: none; color: rgba(255,255,255,0.5); cursor: pointer; font-family: 'Oswald', sans-serif; font-size: 11px; display: flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
         .sort-btn:hover { color: #fbbf24; }
         .sort-btn.active { color: #fbbf24; }
@@ -593,7 +607,7 @@ export default function TradeHiringPlatform() {
         .bulk-btn { padding: 10px 20px; font-family: 'Oswald', sans-serif; font-size: 12px; cursor: pointer; border: none; background: #fbbf24; color: #0d0d0d; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 0.5px; }
         .bulk-btn:hover { background: #f59e0b; }
         .cert-tag { display: inline-block; padding: 3px 6px; background: rgba(251,191,36,0.15); color: #fbbf24; font-size: 9px; margin: 2px; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; }
-        .header-row { display: grid; grid-template-columns: 40px 1.5fr 1fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 0.7fr 140px; gap: 12px; padding: 14px 20px; background: #0a0a0a; border-bottom: 2px solid #fbbf24; font-family: 'Oswald', sans-serif; font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; }
+        .header-row { display: grid; grid-template-columns: 40px 1.5fr 1fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 0.7fr 180px; gap: 12px; padding: 14px 20px; background: #0a0a0a; border-bottom: 2px solid #fbbf24; font-family: 'Oswald', sans-serif; font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; }
         .range-slider { width: 100%; accent-color: #fbbf24; }
         .expand-panel { background: #1a1a1a; border: 1px solid #fbbf24; border-top: none; padding: 20px; margin-bottom: 6px; margin-top: -6px; }
         .ref-card { background: #222; padding: 12px; margin: 4px 0; }
@@ -684,7 +698,10 @@ export default function TradeHiringPlatform() {
           }}>
             Export CSV
           </button>
-          <button className="bulk-btn" style={{ background: '#dc2626' }} onClick={() => setSelectedWorkers([])}>
+          <button className="bulk-btn" style={{ background: '#dc2626' }} onClick={deleteSelected}>
+            Delete Selected
+          </button>
+          <button className="bulk-btn" style={{ background: '#333' }} onClick={() => setSelectedWorkers([])}>
             Clear
           </button>
         </div>
@@ -772,6 +789,9 @@ export default function TradeHiringPlatform() {
                   </button>
                   <button className="contact-btn phone-btn" onClick={() => window.open(`tel:${worker.phone}`)}>
                     Call
+                  </button>
+                  <button className="contact-btn delete-btn" onClick={() => deleteWorker(worker.id)}>
+                    ✕
                   </button>
                 </div>
               </div>
