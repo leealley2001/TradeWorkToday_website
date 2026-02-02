@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   'https://pmbukkiatxyoefpmmypg.supabase.co',
-  'sb_publishable_VjjWV6wKBdlqJWVA6Rb1RA_vtNjjaIf'
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtYnVra2lhdHh5b2VmcG1teXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwNjE4NTQsImV4cCI6MjA4NTYzNzg1NH0.Sd7r_5-JAqtENc7Vg5VHv743HIUvmik4wo1B2O8Iyfs'
 );
 
 const trades = ["All Trades", "Electrician", "Plumber", "HVAC Technician", "Carpenter", "Welder", "Roofer", "Mason", "Painter", "General Labor"];
