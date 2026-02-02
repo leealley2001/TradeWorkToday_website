@@ -47,7 +47,7 @@ export default function TradeHiringPlatform() {
   const [submitError, setSubmitError] = useState(null);
 
   // ⚠️ REPLACE with your email address
-  const YOUR_EMAIL = "your@email.com";
+  const YOUR_EMAIL = "leegreenearth@gmail.com";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
