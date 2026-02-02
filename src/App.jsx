@@ -42,7 +42,7 @@ export default function TradeHiringPlatform() {
     ref1Name: "", ref1Phone: "", ref1Relationship: "",
     ref2Name: "", ref2Phone: "", ref2Relationship: ""
   });
-  const [formSubmitted, setFormSubmitted] = useState(false);,
+  const [formSubmitted, setFormSubmitted] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
    const [passwordInput, setPasswordInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
