@@ -42,13 +42,16 @@ export default function TradeHiringPlatform() {
     ref1Name: "", ref1Phone: "", ref1Relationship: "",
     ref2Name: "", ref2Phone: "", ref2Relationship: ""
   });
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);,
+  const [showLogin, setShowLogin] = useState(false);
+   const [passwordInput, setPasswordInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
   // ⚠️ REPLACE with your email address
   const YOUR_EMAIL = "leegreenearth@gmail.com";
 
+  const DASHBOARD_PASSWORD = "Tradework2026";
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -152,7 +155,7 @@ export default function TradeHiringPlatform() {
       <div style={{
         minHeight: '100vh',
         background: '#fff',
-        fontFamily: "'Work Sans', sans-serif",
+        fontFamily: "'Work Sans', sans-serif",F
         color: '#1a1a1a'
       }}>
         <style>{`
@@ -314,9 +317,33 @@ export default function TradeHiringPlatform() {
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <button className="nav-btn" onClick={() => setView('dashboard')}>Employer Login</button>
+            <button className="nav-btn" onClick={() => setShowLogin(true)}>Employer Login</button>
           </div>
         </nav>
+        {showLogin && (
+     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+       <div style={{ background: '#1a1a1a', padding: '40px', border: '3px solid #fbbf24', maxWidth: '400px', width: '90%' }}>
+         <h3 style={{ fontFamily: "'Oswald', sans-serif", color: '#fbbf24', marginBottom: '20px', textTransform: 'uppercase' }}>Employer Login</h3>
+         <input 
+           type="password" 
+           placeholder="Enter password" 
+           value={passwordInput}
+           onChange={(e) => setPasswordInput(e.target.value)}
+           style={{ width: '100%', padding: '14px', background: '#fff', border: '3px solid #333', marginBottom: '16px', fontSize: '16px' }}
+         />
+         <div style={{ display: 'flex', gap: '12px' }}>
+           <button 
+             onClick={() => { if(passwordInput === DASHBOARD_PASSWORD) { setView('dashboard'); setShowLogin(false); } else { alert('Incorrect password'); }}}
+             style={{ flex: 1, padding: '14px', background: '#fbbf24', border: 'none', fontFamily: "'Oswald', sans-serif", fontSize: '16px', cursor: 'pointer', textTransform: 'uppercase' }}
+           >Enter</button>
+           <button 
+             onClick={() => { setShowLogin(false); setPasswordInput(""); }}
+             style={{ flex: 1, padding: '14px', background: '#333', color: '#fff', border: 'none', fontFamily: "'Oswald', sans-serif", fontSize: '16px', cursor: 'pointer', textTransform: 'uppercase' }}
+           >Cancel</button>
+         </div>
+       </div>
+     </div>
+   )}
 
         {/* Hero Section */}
         <section className="hero-section">
