@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-// Sample data with Phoenix metro locations and new fields
 const sampleApplications = [
   { id: 1, name: "Marcus Johnson", trade: "Electrician", experience: 12, hourlyRate: 45, location: "Phoenix", phone: "602-555-0142", email: "marcus.j@email.com", availability: "Immediate", employmentType: "Full-time", certifications: ["Master Electrician", "OSHA 30"], rating: 4.8, appliedDate: "2026-01-28", hasResume: true, references: [{name: "Tom Brady", phone: "602-555-1111", relationship: "Former Supervisor"}, {name: "Mike Chen", phone: "602-555-2222", relationship: "Coworker"}] },
   { id: 2, name: "Sarah Chen", trade: "Plumber", experience: 8, hourlyRate: 42, location: "Scottsdale", phone: "480-555-0198", email: "sarah.chen@email.com", availability: "2 weeks", employmentType: "Full-time", certifications: ["Journeyman Plumber", "Backflow Certified"], rating: 4.9, appliedDate: "2026-01-29", hasResume: true, references: [{name: "Bill Smith", phone: "480-555-3333", relationship: "Former Employer"}, {name: "Jane Doe", phone: "480-555-4444", relationship: "Supervisor"}] },
@@ -43,15 +42,17 @@ export default function TradeHiringPlatform() {
     ref2Name: "", ref2Phone: "", ref2Relationship: ""
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
-   const [passwordInput, setPasswordInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
 
   // ⚠️ REPLACE with your email address
-  const YOUR_EMAIL = "leegreenearth@gmail.com";
-
+  const YOUR_EMAIL = "leealley2001@gmail.com";
+  
+  // ⚠️ Change this to update your dashboard password
   const DASHBOARD_PASSWORD = "Tradework2026";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -71,7 +72,7 @@ export default function TradeHiringPlatform() {
       reference1: `${formData.ref1Name} (${formData.ref1Relationship}) - ${formData.ref1Phone}`,
       reference2: `${formData.ref2Name} (${formData.ref2Relationship}) - ${formData.ref2Phone}`,
       hasResume: formData.resume ? "Yes - " + formData.resumeName : "No",
-      _subject: `🔧 New Application: ${formData.name} - ${formData.trade} - ${formData.location}`,
+      _subject: `New Application: ${formData.name} - ${formData.trade} - ${formData.location}`,
       _template: "table",
     };
 
@@ -109,7 +110,6 @@ export default function TradeHiringPlatform() {
     }
   };
 
-  // Filter and sort logic
   const filteredApplications = applications.filter(app => {
     if (filters.trade !== "All Trades" && app.trade !== filters.trade) return false;
     if (filters.availability !== "Any" && app.availability !== filters.availability) return false;
@@ -149,13 +149,12 @@ export default function TradeHiringPlatform() {
     });
   };
 
-  // Landing Page View
   if (view === 'landing') {
     return (
       <div style={{
         minHeight: '100vh',
         background: '#fff',
-        fontFamily: "'Work Sans', sans-serif",F
+        fontFamily: "'Work Sans', sans-serif",
         color: '#1a1a1a'
       }}>
         <style>{`
@@ -300,12 +299,10 @@ export default function TradeHiringPlatform() {
           }
         `}</style>
         
-        {/* Urgent Hiring Banner */}
         <div className="urgent-banner">
-          🔥 NOW HIRING — IMMEDIATE POSITIONS AVAILABLE ACROSS THE VALLEY — APPLY TODAY 🔥
+          NOW HIRING — IMMEDIATE POSITIONS AVAILABLE ACROSS THE VALLEY — APPLY TODAY
         </div>
 
-        {/* Navigation */}
         <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 40px', background: '#1a1a1a' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ width: '50px', height: '50px', background: '#fbbf24', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '3px solid #1a1a1a' }}>
@@ -320,32 +317,33 @@ export default function TradeHiringPlatform() {
             <button className="nav-btn" onClick={() => setShowLogin(true)}>Employer Login</button>
           </div>
         </nav>
-        {showLogin && (
-     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-       <div style={{ background: '#1a1a1a', padding: '40px', border: '3px solid #fbbf24', maxWidth: '400px', width: '90%' }}>
-         <h3 style={{ fontFamily: "'Oswald', sans-serif", color: '#fbbf24', marginBottom: '20px', textTransform: 'uppercase' }}>Employer Login</h3>
-         <input 
-           type="password" 
-           placeholder="Enter password" 
-           value={passwordInput}
-           onChange={(e) => setPasswordInput(e.target.value)}
-           style={{ width: '100%', padding: '14px', background: '#fff', border: '3px solid #333', marginBottom: '16px', fontSize: '16px' }}
-         />
-         <div style={{ display: 'flex', gap: '12px' }}>
-           <button 
-             onClick={() => { if(passwordInput === DASHBOARD_PASSWORD) { setView('dashboard'); setShowLogin(false); } else { alert('Incorrect password'); }}}
-             style={{ flex: 1, padding: '14px', background: '#fbbf24', border: 'none', fontFamily: "'Oswald', sans-serif", fontSize: '16px', cursor: 'pointer', textTransform: 'uppercase' }}
-           >Enter</button>
-           <button 
-             onClick={() => { setShowLogin(false); setPasswordInput(""); }}
-             style={{ flex: 1, padding: '14px', background: '#333', color: '#fff', border: 'none', fontFamily: "'Oswald', sans-serif", fontSize: '16px', cursor: 'pointer', textTransform: 'uppercase' }}
-           >Cancel</button>
-         </div>
-       </div>
-     </div>
-   )}
 
-        {/* Hero Section */}
+        {showLogin && (
+          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+            <div style={{ background: '#1a1a1a', padding: '40px', border: '3px solid #fbbf24', maxWidth: '400px', width: '90%' }}>
+              <h3 style={{ fontFamily: "'Oswald', sans-serif", color: '#fbbf24', marginBottom: '20px', textTransform: 'uppercase' }}>Employer Login</h3>
+              <input 
+                type="password" 
+                placeholder="Enter password" 
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                onKeyDown={(e) => { if(e.key === 'Enter') { if(passwordInput === DASHBOARD_PASSWORD) { setView('dashboard'); setShowLogin(false); setPasswordInput(""); } else { alert('Incorrect password'); }}}}
+                style={{ width: '100%', padding: '14px', background: '#fff', border: '3px solid #333', marginBottom: '16px', fontSize: '16px' }}
+              />
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button 
+                  onClick={() => { if(passwordInput === DASHBOARD_PASSWORD) { setView('dashboard'); setShowLogin(false); setPasswordInput(""); } else { alert('Incorrect password'); }}}
+                  style={{ flex: 1, padding: '14px', background: '#fbbf24', border: 'none', fontFamily: "'Oswald', sans-serif", fontSize: '16px', cursor: 'pointer', textTransform: 'uppercase' }}
+                >Enter</button>
+                <button 
+                  onClick={() => { setShowLogin(false); setPasswordInput(""); }}
+                  style={{ flex: 1, padding: '14px', background: '#333', color: '#fff', border: 'none', fontFamily: "'Oswald', sans-serif", fontSize: '16px', cursor: 'pointer', textTransform: 'uppercase' }}
+                >Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <section className="hero-section">
           <div style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
             <div className="section-label">Phoenix Metro's #1 Trade Job Board</div>
@@ -361,7 +359,6 @@ export default function TradeHiringPlatform() {
           </div>
         </section>
 
-        {/* Service Area */}
         <section style={{ background: '#1a1a1a', padding: '40px', textAlign: 'center' }}>
           <div className="section-label" style={{ color: '#fbbf24' }}>We Serve The Entire Valley</div>
           <div style={{ maxWidth: '900px', margin: '16px auto 0', display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -371,7 +368,6 @@ export default function TradeHiringPlatform() {
           </div>
         </section>
 
-        {/* Why Work With Us */}
         <section style={{ padding: '60px 40px', background: '#fff' }}>
           <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -395,7 +391,6 @@ export default function TradeHiringPlatform() {
           </div>
         </section>
 
-        {/* Current Openings Teaser */}
         <section style={{ padding: '40px', background: '#fbbf24' }}>
           <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', justifyContent: 'space-around', textAlign: 'center' }}>
             {[
@@ -412,7 +407,6 @@ export default function TradeHiringPlatform() {
           </div>
         </section>
 
-        {/* Application Form */}
         <section id="apply-section" style={{ padding: '60px 40px', background: '#f5f5f5' }}>
           <div style={{ maxWidth: '700px', margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -429,7 +423,6 @@ export default function TradeHiringPlatform() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ background: '#fff', border: '3px solid #1a1a1a', padding: '32px' }}>
-                {/* Personal Info */}
                 <div style={{ marginBottom: '32px' }}>
                   <h3 style={{ fontFamily: "'Oswald', sans-serif", fontSize: '18px', marginBottom: '16px', textTransform: 'uppercase', borderBottom: '2px solid #1a1a1a', paddingBottom: '8px' }}>Your Information</h3>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -445,7 +438,6 @@ export default function TradeHiringPlatform() {
                   </div>
                 </div>
 
-                {/* Trade Info */}
                 <div style={{ marginBottom: '32px' }}>
                   <h3 style={{ fontFamily: "'Oswald', sans-serif", fontSize: '18px', marginBottom: '16px', textTransform: 'uppercase', borderBottom: '2px solid #1a1a1a', paddingBottom: '8px' }}>Work Details</h3>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -484,16 +476,6 @@ export default function TradeHiringPlatform() {
                       transition: 'all 0.2s ease'
                     }}
                     onClick={() => document.getElementById('resume-upload').click()}
-                    onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = '#d62828'; }}
-                    onDragLeave={(e) => { e.currentTarget.style.borderColor = '#ccc'; }}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      e.currentTarget.style.borderColor = '#ccc';
-                      const file = e.dataTransfer.files[0];
-                      if (file && (file.type === 'application/pdf' || file.type === 'application/msword' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
-                        setFormData({...formData, resume: file, resumeName: file.name});
-                      }
-                    }}
                     >
                       <input 
                         type="file" 
@@ -524,14 +506,13 @@ export default function TradeHiringPlatform() {
                         <div>
                           <span style={{ fontSize: '24px' }}>📤</span>
                           <div style={{ marginTop: '8px', color: '#666' }}>Drop your resume here or <span style={{ color: '#d62828', fontWeight: 600 }}>click to browse</span></div>
-                          <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>PDF, DOC, or DOCX • Max 5MB</div>
+                          <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>PDF, DOC, or DOCX</div>
                         </div>
                       )}
                     </div>
                   </div>
                 </div>
 
-                {/* References */}
                 <div className="ref-section">
                   <h3 style={{ fontFamily: "'Oswald', sans-serif", fontSize: '18px', marginBottom: '8px', textTransform: 'uppercase' }}>Work References (Required)</h3>
                   <p style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>Please provide two professional references who can speak to your work quality.</p>
@@ -541,7 +522,7 @@ export default function TradeHiringPlatform() {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
                       <input className="form-input" placeholder="Full Name *" required value={formData.ref1Name} onChange={e => setFormData({...formData, ref1Name: e.target.value})} />
                       <input className="form-input" type="tel" placeholder="Phone Number *" required value={formData.ref1Phone} onChange={e => setFormData({...formData, ref1Phone: e.target.value})} />
-                      <input className="form-input" placeholder="Relationship (e.g. Supervisor) *" required value={formData.ref1Relationship} onChange={e => setFormData({...formData, ref1Relationship: e.target.value})} />
+                      <input className="form-input" placeholder="Relationship *" required value={formData.ref1Relationship} onChange={e => setFormData({...formData, ref1Relationship: e.target.value})} />
                     </div>
                   </div>
                   
@@ -550,7 +531,7 @@ export default function TradeHiringPlatform() {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
                       <input className="form-input" placeholder="Full Name *" required value={formData.ref2Name} onChange={e => setFormData({...formData, ref2Name: e.target.value})} />
                       <input className="form-input" type="tel" placeholder="Phone Number *" required value={formData.ref2Phone} onChange={e => setFormData({...formData, ref2Phone: e.target.value})} />
-                      <input className="form-input" placeholder="Relationship (e.g. Supervisor) *" required value={formData.ref2Relationship} onChange={e => setFormData({...formData, ref2Relationship: e.target.value})} />
+                      <input className="form-input" placeholder="Relationship *" required value={formData.ref2Relationship} onChange={e => setFormData({...formData, ref2Relationship: e.target.value})} />
                     </div>
                   </div>
                 </div>
@@ -568,7 +549,6 @@ export default function TradeHiringPlatform() {
           </div>
         </section>
 
-        {/* Footer */}
         <footer style={{ background: '#1a1a1a', padding: '30px 40px', textAlign: 'center' }}>
           <div style={{ color: '#fbbf24', fontFamily: "'Oswald', sans-serif", fontSize: '16px', marginBottom: '8px' }}>
             TRADE WORK TODAY — Serving the Phoenix Metro
@@ -581,7 +561,6 @@ export default function TradeHiringPlatform() {
     );
   }
 
-  // Dashboard View
   return (
     <div style={{
       minHeight: '100vh',
@@ -621,7 +600,6 @@ export default function TradeHiringPlatform() {
         .type-badge { padding: 4px 8px; font-size: 10px; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; }
       `}</style>
 
-      {/* Dashboard Header */}
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', borderBottom: '1px solid #222', background: '#111' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <button className="back-btn" onClick={() => setView('landing')}>← Back to Site</button>
@@ -632,7 +610,6 @@ export default function TradeHiringPlatform() {
         </div>
       </header>
 
-      {/* Filters Section */}
       <section style={{ padding: '20px 24px', background: '#111', borderBottom: '1px solid #222' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'flex-end' }}>
           <div>
@@ -672,7 +649,7 @@ export default function TradeHiringPlatform() {
           <div>
             <label style={{ display: 'block', fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '6px', fontFamily: "'Oswald', sans-serif", textTransform: 'uppercase', letterSpacing: '1px' }}>Experience</label>
             <select className="filter-select" value={filters.experience} onChange={e => setFilters({...filters, experience: e.target.value})}>
-              {experienceLevels.map(e => <option key={e} value={e}>{e}</option>)}
+              {experienceLevels.map(exp => <option key={exp} value={exp}>{exp}</option>)}
             </select>
           </div>
           <div style={{ minWidth: '150px' }}>
@@ -682,7 +659,6 @@ export default function TradeHiringPlatform() {
         </div>
       </section>
 
-      {/* Bulk Actions */}
       {selectedWorkers.length > 0 && (
         <div className="bulk-actions">
           <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: '12px' }}>
@@ -692,7 +668,7 @@ export default function TradeHiringPlatform() {
             const emails = filteredApplications.filter(a => selectedWorkers.includes(a.id)).map(a => a.email).join(',');
             window.open(`mailto:${emails}?subject=Job Opportunity - Trade Work Today`);
           }}>
-            📧 Email All
+            Email All
           </button>
           <button className="bulk-btn" style={{ background: 'transparent', border: '1px solid #fbbf24', color: '#fbbf24' }} onClick={() => {
             const data = filteredApplications.filter(a => selectedWorkers.includes(a.id));
@@ -706,15 +682,14 @@ export default function TradeHiringPlatform() {
             a.download = 'selected-workers.csv';
             a.click();
           }}>
-            📄 Export CSV
+            Export CSV
           </button>
           <button className="bulk-btn" style={{ background: '#dc2626' }} onClick={() => setSelectedWorkers([])}>
-            ✕ Clear
+            Clear
           </button>
         </div>
       )}
 
-      {/* Table Header */}
       <div className="header-row">
         <div><input type="checkbox" className="checkbox" onChange={selectAllVisible} checked={filteredApplications.length > 0 && filteredApplications.every(a => selectedWorkers.includes(a.id))} /></div>
         <button className={`sort-btn ${sortBy === 'name' ? 'active' : ''}`} onClick={() => { setSortBy('name'); setSortOrder(sortBy === 'name' && sortOrder === 'asc' ? 'desc' : 'asc'); }}>
@@ -734,7 +709,6 @@ export default function TradeHiringPlatform() {
         <span>Actions</span>
       </div>
 
-      {/* Worker List */}
       <div style={{ padding: '0 24px 24px' }}>
         {filteredApplications.length === 0 ? (
           <div style={{ padding: '60px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
@@ -802,7 +776,6 @@ export default function TradeHiringPlatform() {
                 </div>
               </div>
               
-              {/* Expanded Details Panel */}
               {expandedWorker === worker.id && (
                 <div className="expand-panel">
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
