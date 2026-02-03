@@ -74,6 +74,7 @@ export default function TradeHiringPlatform() {
         certifications: app.certifications || [],
         hasResume: app.has_resume,
         resumeName: app.resume_name,
+        resumeUrl: app.resume_url,
         references: [
           { name: app.ref1_name, phone: app.ref1_phone, relationship: app.ref1_relationship },
           { name: app.ref2_name, phone: app.ref2_phone, relationship: app.ref2_relationship }
@@ -91,6 +92,27 @@ export default function TradeHiringPlatform() {
     setIsSubmitting(true);
     setSubmitError(null);
 
+    let resumeUrl = null;
+
+    // Upload resume if provided
+    if (formData.resume) {
+      const fileExt = formData.resume.name.split('.').pop();
+      const fileName = `${Date.now()}_${formData.name.replace(/\s+/g, '_')}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('resumes')
+        .upload(fileName, formData.resume);
+
+      if (uploadError) {
+        console.error('Resume upload error:', uploadError);
+      } else {
+        const { data: urlData } = supabase.storage
+          .from('resumes')
+          .getPublicUrl(fileName);
+        resumeUrl = urlData.publicUrl;
+      }
+    }
+
     const { data, error } = await supabase
       .from('applicants')
       .insert([{
@@ -106,6 +128,7 @@ export default function TradeHiringPlatform() {
         certifications: formData.certifications ? formData.certifications.split(',').map(c => c.trim()) : [],
         has_resume: !!formData.resume,
         resume_name: formData.resumeName || null,
+        resume_url: resumeUrl,
         ref1_name: formData.ref1Name,
         ref1_phone: formData.ref1Phone,
         ref1_relationship: formData.ref1Relationship,
@@ -136,6 +159,7 @@ export default function TradeHiringPlatform() {
       reference1: `${formData.ref1Name} (${formData.ref1Relationship}) - ${formData.ref1Phone}`,
       reference2: `${formData.ref2Name} (${formData.ref2Relationship}) - ${formData.ref2Phone}`,
       hasResume: formData.resume ? "Yes - " + formData.resumeName : "No",
+      resumeLink: resumeUrl || "No resume uploaded",
       _subject: `New Application: ${formData.name} - ${formData.trade} - ${formData.location}`,
       _template: "table",
     };
@@ -661,6 +685,8 @@ export default function TradeHiringPlatform() {
         .phone-btn:hover { background: rgba(5,150,105,0.1); }
         .delete-btn { background: #dc2626; color: #fff; }
         .delete-btn:hover { background: #b91c1c; }
+        .resume-btn { background: #3b82f6; color: #fff; }
+        .resume-btn:hover { background: #2563eb; }
         .sort-btn { background: transparent; border: none; color: rgba(255,255,255,0.5); cursor: pointer; font-family: 'Oswald', sans-serif; font-size: 11px; display: flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
         .sort-btn:hover { color: #fbbf24; }
         .sort-btn.active { color: #fbbf24; }
@@ -871,11 +897,30 @@ export default function TradeHiringPlatform() {
                       <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: '12px', color: '#fbbf24', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Contact Info</div>
                       <div style={{ fontSize: '14px', marginBottom: '4px' }}>📧 {worker.email}</div>
                       <div style={{ fontSize: '14px', marginBottom: '4px' }}>📞 {worker.phone}</div>
-                      <div style={{ fontSize: '14px', marginTop: '8px' }}>
-                        {worker.hasResume ? (
-                          <span style={{ color: '#10b981' }}>📄 Resume on file ✓</span>
+                      <div style={{ fontSize: '14px', marginTop: '12px' }}>
+                        {worker.resumeUrl ? (
+                          <a 
+                            href={worker.resumeUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            style={{ 
+                              display: 'inline-flex', 
+                              alignItems: 'center', 
+                              gap: '8px',
+                              padding: '8px 16px', 
+                              background: '#3b82f6', 
+                              color: '#fff', 
+                              textDecoration: 'none',
+                              fontFamily: "'Oswald', sans-serif",
+                              fontSize: '12px',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.5px'
+                            }}
+                          >
+                            📄 Download Resume
+                          </a>
                         ) : (
-                          <span style={{ color: '#666' }}>📄 No resume</span>
+                          <span style={{ color: '#666' }}>📄 No resume uploaded</span>
                         )}
                       </div>
                     </div>
