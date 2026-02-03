@@ -46,7 +46,6 @@ export default function TradeHiringPlatform() {
   const YOUR_EMAIL = "leealley2001@gmail.com";
   const DASHBOARD_PASSWORD = "Tradework2026";
 
-  // Load applicants from database
   useEffect(() => {
     loadApplicants();
   }, []);
@@ -92,7 +91,6 @@ export default function TradeHiringPlatform() {
     setIsSubmitting(true);
     setSubmitError(null);
 
-    // Save to database
     const { data, error } = await supabase
       .from('applicants')
       .insert([{
@@ -124,7 +122,6 @@ export default function TradeHiringPlatform() {
       return;
     }
 
-    // Send email notification
     const submissionData = {
       name: formData.name,
       email: formData.email,
